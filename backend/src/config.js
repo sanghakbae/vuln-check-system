@@ -21,6 +21,14 @@ const CORS_ORIGINS = String(process.env.CORS_ORIGINS || LOCAL_CONFIG.corsOrigins
   .map((item) => item.trim())
   .filter(Boolean);
 
+function readBoolean(value, fallback = false) {
+  if (value === undefined || value === null || value === "") {
+    return fallback;
+  }
+
+  return String(value).trim().toLowerCase() === "true";
+}
+
 module.exports = {
   ROOT,
   DOMAINS_FILE,
@@ -30,6 +38,7 @@ module.exports = {
   HOST: process.env.HOST || LOCAL_CONFIG.host || "0.0.0.0",
   DEFAULT_PORT: Number(process.env.PORT || LOCAL_CONFIG.port || 3000),
   SPREADSHEET_WEBHOOK_URL: process.env.SPREADSHEET_WEBHOOK_URL || LOCAL_CONFIG.spreadsheetWebhookUrl || "",
+  SCAN_IGNORE_TLS_ERRORS: readBoolean(process.env.SCAN_IGNORE_TLS_ERRORS, readBoolean(LOCAL_CONFIG.scanIgnoreTlsErrors, false)),
   CORS_ORIGINS,
   CRAWL_DELAY_MS: Number(process.env.CRAWL_DELAY_MS || LOCAL_CONFIG.crawlDelayMs || 900),
   PATH_CHECK_DELAY_MS: Number(process.env.PATH_CHECK_DELAY_MS || LOCAL_CONFIG.pathCheckDelayMs || 350),

@@ -12,5 +12,7 @@ services:
         value: 22
       - key: CORS_ORIGINS
         value: https://sanghakbae.github.io
+      - key: SCAN_IGNORE_TLS_ERRORS
+        value: "true"
       - key: SPREADSHEET_WEBHOOK_URL
         sync: false
