@@ -5,10 +5,10 @@
   "description": "URL-based vulnerability check dashboard UI",
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 5173",
-    "dev:backend": "node server.js",
+    "dev:backend": "node backend/src/index.js",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1 --port 4173",
-    "start": "node server.js"
+    "start": "node backend/src/index.js"
   },
   "dependencies": {
     "playwright": "^1.58.2"

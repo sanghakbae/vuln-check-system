@@ -75,6 +75,16 @@ const manualRequestInput = document.querySelector("#manual-request");
 const manualResponseInput = document.querySelector("#manual-response");
 const manualNoteInput = document.querySelector("#manual-note");
 
+const API_BASE_URL = String(import.meta.env.VITE_API_BASE_URL || "").trim().replace(/\/$/, "");
+
+function apiUrl(path) {
+  if (!API_BASE_URL) {
+    return path;
+  }
+
+  return `${API_BASE_URL}${path}`;
+}
+
 let selectedItem = null;
 let nextDomainId = 4;
 let scanState = {};
@@ -518,7 +528,7 @@ function renderDomainTable(items) {
 
 async function loadDomains() {
   try {
-    const response = await fetch("/api/domains", {
+    const response = await fetch(apiUrl("/api/domains"), {
       headers: { Accept: "application/json" },
     });
     const payload = await parseApiResponse(response);
@@ -535,7 +545,7 @@ async function loadDomains() {
 }
 
 async function saveDomainRecord(record) {
-  const response = await fetch("/api/domains", {
+  const response = await fetch(apiUrl("/api/domains"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -553,7 +563,7 @@ async function saveDomainRecord(record) {
 }
 
 async function loadScanResults() {
-  const response = await fetch("/api/scans", {
+  const response = await fetch(apiUrl("/api/scans"), {
     headers: { Accept: "application/json" },
   });
   const payload = await parseApiResponse(response);
@@ -574,7 +584,7 @@ async function loadScanResults() {
 }
 
 async function saveScanResult(record) {
-  const response = await fetch("/api/scans", {
+  const response = await fetch(apiUrl("/api/scans"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -592,7 +602,7 @@ async function saveScanResult(record) {
 }
 
 async function verifySession(target, sessionValue, checkPath) {
-  const response = await fetch("/api/session-check", {
+  const response = await fetch(apiUrl("/api/session-check"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -1103,7 +1113,7 @@ async function executeScan(target) {
   try {
     const session = getCurrentSession(target);
     const sessionValue = buildSessionCookie(session);
-    const response = await fetch("/api/scan", {
+    const response = await fetch(apiUrl("/api/scan"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
