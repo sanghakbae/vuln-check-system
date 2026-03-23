@@ -27,7 +27,7 @@ module.exports = {
   SCAN_RESULTS_FILE,
   CONFIG_FILE,
   LOCAL_CONFIG,
-  HOST: "127.0.0.1",
+  HOST: process.env.HOST || LOCAL_CONFIG.host || "0.0.0.0",
   DEFAULT_PORT: Number(process.env.PORT || LOCAL_CONFIG.port || 3000),
   SPREADSHEET_WEBHOOK_URL: process.env.SPREADSHEET_WEBHOOK_URL || LOCAL_CONFIG.spreadsheetWebhookUrl || "",
   CORS_ORIGINS,
