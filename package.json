@@ -4,10 +4,16 @@
   "private": true,
   "description": "URL-based vulnerability check dashboard UI",
   "scripts": {
-    "dev": "node server.js",
+    "dev": "vite --host 127.0.0.1 --port 5173",
+    "dev:backend": "node server.js",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 4173",
     "start": "node server.js"
   },
   "dependencies": {
     "playwright": "^1.58.2"
+  },
+  "devDependencies": {
+    "vite": "^7.1.7"
   }
 }
