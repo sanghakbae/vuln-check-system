@@ -232,6 +232,59 @@ function wait(ms) {
   });
 }
 
+function buildDetailedError(error, context = {}) {
+  const details = {
+    name: error?.name || "Error",
+    message: error?.message || "unknown_error",
+  };
+
+  if (error?.step) {
+    details.step = error.step;
+  }
+
+  if (error?.code) {
+    details.code = error.code;
+  }
+
+  if (error?.cause?.code) {
+    details.causeCode = error.cause.code;
+  }
+
+  if (error?.cause?.message) {
+    details.causeMessage = error.cause.message;
+  }
+
+  if (error?.stack) {
+    details.stack = error.stack;
+  }
+
+  if (Object.keys(context).length) {
+    details.context = context;
+  }
+
+  return details;
+}
+
+function logDetailedError(label, error, context = {}) {
+  console.error(
+    `[${new Date().toISOString()}] ${label}`,
+    JSON.stringify(buildDetailedError(error, context), null, 2),
+  );
+}
+
+function withStep(error, step, extras = {}) {
+  if (error instanceof Error) {
+    error.step = error.step || step;
+    Object.assign(error, extras);
+    return error;
+  }
+
+  const wrapped = new Error(typeof error === "string" ? error : "unknown_error");
+  wrapped.step = step;
+  Object.assign(wrapped, extras);
+  return wrapped;
+}
+
 function buildScanHeaders(sessionValue, extras = {}) {
   const headers = {
     "User-Agent": "VulnCheckLocalScanner/0.1",
@@ -930,16 +983,42 @@ async function crawlInventory(rootUrl, rootHtml, sessionValue) {
 
 async function runBasicScan(target, sessionValue = "") {
   const url = new URL(target);
-  const response = await fetch(url, {
-    method: "GET",
-    redirect: "follow",
-    headers: buildScanHeaders(sessionValue, {
-      Accept: "text/html,application/xhtml+xml",
-    }),
+  let response;
+
+  try {
+    response = await fetch(url, {
+      method: "GET",
+      redirect: "follow",
+      headers: buildScanHeaders(sessionValue, {
+        Accept: "text/html,application/xhtml+xml",
+      }),
+    });
+  } catch (error) {
+    throw withStep(error, "initial_fetch", { target });
+  }
+
+  let html;
+  try {
+    html = await response.text();
+  } catch (error) {
+    throw withStep(error, "read_initial_response", { target, status: response.status });
+  }
+
+  let staticInventory;
+  try {
+    staticInventory = await crawlInventory(url, html, sessionValue);
+  } catch (error) {
+    throw withStep(error, "static_inventory", { target, finalUrl: response.url });
+  }
+
+  const browserInventory = await crawlInventoryWithBrowser(url, sessionValue).catch((error) => {
+    logDetailedError("browser_inventory_failed", error, {
+      target,
+      finalUrl: response.url,
+    });
+    return null;
   });
-  const html = await response.text();
-  const staticInventory = await crawlInventory(url, html, sessionValue);
-  const browserInventory = await crawlInventoryWithBrowser(url, sessionValue).catch(() => null);
+
   const inventory = mergeInventory(staticInventory, browserInventory);
 
   const headers = response.headers;
@@ -1134,15 +1213,33 @@ async function runBasicScan(target, sessionValue = "") {
 async function verifySessionState(target, sessionValue, checkPath) {
   const baseUrl = new URL(target);
   const verifyUrl = new URL(checkPath || "/admin", baseUrl);
-  const response = await fetch(verifyUrl, {
-    method: "GET",
-    redirect: "follow",
-    headers: buildScanHeaders(sessionValue, {
-      Accept: "text/html,application/xhtml+xml",
-    }),
-  });
+  let response;
 
-  const html = await response.text();
+  try {
+    response = await fetch(verifyUrl, {
+      method: "GET",
+      redirect: "follow",
+      headers: buildScanHeaders(sessionValue, {
+        Accept: "text/html,application/xhtml+xml",
+      }),
+    });
+  } catch (error) {
+    throw withStep(error, "session_verify_fetch", {
+      target,
+      verifyUrl: verifyUrl.toString(),
+    });
+  }
+
+  let html;
+  try {
+    html = await response.text();
+  } catch (error) {
+    throw withStep(error, "session_verify_read_body", {
+      target,
+      verifyUrl: verifyUrl.toString(),
+      status: response.status,
+    });
+  }
   const normalizedBody = html.toLowerCase();
   const finalUrl = response.url;
   const redirectedToLogin =
@@ -1335,9 +1432,14 @@ const server = http.createServer((req, res) => {
           const result = await runBasicScan(target, sessionValue);
           sendJson(req, res, 200, result);
         } catch (error) {
+          logDetailedError("scan_failed", error, {
+            target,
+            sessionUsed: Boolean(sessionValue),
+          });
           sendJson(req, res, 500, {
             error: "scan_failed",
             message: error.message,
+            step: error.step || "unknown",
           });
         }
       })
@@ -1365,8 +1467,20 @@ const server = http.createServer((req, res) => {
           return;
         }
 
-        const result = await verifySessionState(target, sessionValue, checkPath);
-        sendJson(req, res, 200, result);
+        try {
+          const result = await verifySessionState(target, sessionValue, checkPath);
+          sendJson(req, res, 200, result);
+        } catch (error) {
+          logDetailedError("session_check_failed", error, {
+            target,
+            checkPath,
+          });
+          sendJson(req, res, 500, {
+            error: "session_check_failed",
+            message: error.message,
+            step: error.step || "unknown",
+          });
+        }
       })
       .catch((error) => {
         sendJson(req, res, 500, {
