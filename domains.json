@@ -1,0 +1,23 @@
+[
+  {
+    "id": "1",
+    "domain": "https://app.staging-example.com",
+    "serviceName": "Staging App",
+    "serviceType": "관리자 콘솔",
+    "servicePurpose": "사전 배포 검증"
+  },
+  {
+    "id": "2",
+    "domain": "https://www.example.com",
+    "serviceName": "Main Web",
+    "serviceType": "공개 사이트",
+    "servicePurpose": "대외 서비스"
+  },
+  {
+    "id": "3",
+    "domain": "https://docs.example.com",
+    "serviceName": "Docs",
+    "serviceType": "공개 사이트",
+    "servicePurpose": "문서 제공"
+  }
+]

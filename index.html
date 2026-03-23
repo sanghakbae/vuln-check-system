@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vuln Check</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <p class="eyebrow">Vuln Check</p>
+          <strong>Security Console</strong>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="main">
+          <a class="nav-item is-active" href="#" data-nav-target="domains">
+            <span>01</span>
+            <strong>도메인 등록</strong>
+          </a>
+          <a class="nav-item" href="#" data-nav-target="scan">
+            <span>02</span>
+            <strong>사이트 스캔</strong>
+          </a>
+          <div class="nav-group" data-nav-group>
+            <button type="button" class="nav-group-title" data-nav-group-toggle>
+              <span>03</span>
+              <strong>취약점 점검</strong>
+            </button>
+            <div class="nav-submenu">
+              <a class="nav-item nav-item-sub" href="#" data-nav-target="auto-check">
+                <span>03-1</span>
+                <strong>자동 점검</strong>
+              </a>
+              <a class="nav-item nav-item-sub" href="#" data-nav-target="manual-check">
+                <span>03-2</span>
+                <strong>수동 점검</strong>
+              </a>
+            </div>
+          </div>
+          <a class="nav-item" href="#" data-nav-target="report">
+            <span>04</span>
+            <strong>결과 리포트</strong>
+          </a>
+        </nav>
+      </aside>
+
+      <div class="content-shell">
+        <div class="content-toolbar">
+          <button type="button" class="sidebar-toggle secondary-button" data-sidebar-toggle>메뉴 숨기기</button>
+        </div>
+        <section class="status-dashboard">
+          <article class="status-card" data-flow-step="domains">
+            <em>01</em>
+            <span class="status-label">도메인 등록</span>
+            <strong data-status-domains>0</strong>
+          </article>
+          <article class="status-card" data-flow-step="scan">
+            <em>02</em>
+            <span class="status-label">사이트 스캔</span>
+            <strong data-status-scan>0</strong>
+          </article>
+          <article class="status-card" data-flow-step="auto-check">
+            <em>03</em>
+            <span class="status-label">자동 점검</span>
+            <strong data-status-settings>0</strong>
+          </article>
+          <article class="status-card" data-flow-step="manual-check">
+            <em>04</em>
+            <span class="status-label">수동 점검</span>
+            <strong data-status-run>0</strong>
+          </article>
+          <article class="status-card" data-flow-step="report">
+            <em>05</em>
+            <span class="status-label">결과 리포트</span>
+            <strong data-status-complete>0</strong>
+          </article>
+        </section>
+
+        <section class="status-summary">
+          <article class="summary-chip summary-chip-domains">
+            <span>등록된 도메인</span>
+            <strong data-status-domains-summary>0개</strong>
+            <small data-status-domains-percent>0%</small>
+          </article>
+          <article class="summary-chip summary-chip-scan">
+            <span>사이트 스캔 완료</span>
+            <strong data-status-scan-summary>0개</strong>
+            <small data-status-scan-percent>0%</small>
+          </article>
+          <article class="summary-chip summary-chip-settings">
+            <span>자동 점검 완료</span>
+            <strong data-status-settings-summary>0개</strong>
+            <small data-status-settings-percent>0%</small>
+          </article>
+          <article class="summary-chip summary-chip-complete">
+            <span>결과 리포트</span>
+            <strong data-status-complete-summary>0개</strong>
+            <small data-status-complete-percent>0%</small>
+          </article>
+        </section>
+
+        <section class="view is-active" data-view="domains">
+          <header class="hero">
+            <p class="eyebrow">Asset Onboarding</p>
+            <h1>도메인 등록</h1>
+            <p class="hero-copy">점검할 도메인을 등록하고 목록에서 선택할 수 있습니다.</p>
+          </header>
+
+          <main class="simple-layout">
+            <section class="panel">
+              <div class="panel-head">
+                <h2>도메인 추가 및 수정</h2>
+                <span class="badge badge-live">Simple Form</span>
+              </div>
+
+              <form class="registration-form">
+                <div class="registration-grid">
+                  <div>
+                    <label for="domain-url">도메인 또는 URL</label>
+                    <input
+                      id="domain-url"
+                      name="domain-url"
+                      type="url"
+                      placeholder="https://example.com"
+                      autocomplete="off"
+                    />
+                  </div>
+                  <div>
+                    <label for="service-name">관련 서비스</label>
+                    <input id="service-name" name="service-name" type="text" placeholder="예: Admin Portal" />
+                  </div>
+                  <div>
+                    <label for="service-type">서비스 구분</label>
+                    <select id="service-type" name="service-type">
+                      <option value="관리자 콘솔">관리자 콘솔</option>
+                      <option value="공개 사이트">공개 사이트</option>
+                      <option value="기타">기타</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="service-purpose">용도</label>
+                    <input id="service-purpose" class="compact-input" name="service-purpose" type="text" placeholder="예: 운영자 로그인 및 관리" />
+                  </div>
+                  <div class="registration-save">
+                    <label>&nbsp;</label>
+                    <button type="submit" data-submit-button>저장</button>
+                  </div>
+                </div>
+                <p class="form-hint is-hidden" data-form-hint></p>
+              </form>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h2>등록된 도메인</h2>
+                <span class="badge" data-total-count>0</span>
+              </div>
+
+              <div class="domain-table-wrap">
+                <table class="domain-table">
+                  <thead>
+                    <tr>
+                      <th>No</th>
+                      <th>도메인</th>
+                      <th>서비스</th>
+                      <th>서비스 구분</th>
+                      <th>용도</th>
+                    </tr>
+                  </thead>
+                  <tbody data-domain-list></tbody>
+                </table>
+              </div>
+            </section>
+          </main>
+        </section>
+
+        <section class="view" data-view="scan">
+          <header class="hero">
+            <p class="eyebrow">Discovery</p>
+            <h1>사이트 스캔</h1>
+            <p class="hero-copy">선택한 사이트의 라이트 크롤링과 기본 수집 결과를 확인합니다.</p>
+          </header>
+
+          <main class="simple-layout">
+            <section class="panel">
+              <div class="panel-head">
+                <h2>스캔 대상</h2>
+                <span class="badge selected-site-badge" data-selected-domain>선택 없음</span>
+              </div>
+              <div class="meta-row scan-target-row">
+                <div>
+                  <label for="scan-domain-select">등록된 도메인 선택</label>
+                  <select id="scan-domain-select" data-scan-domain-select></select>
+                </div>
+                <div>
+                  <label for="scan-session-key">세션 파라미터</label>
+                  <input id="scan-session-key" data-scan-session-key type="text" placeholder="JSESSIONID, PHPSESSID, SESSION" />
+                </div>
+                <div>
+                  <label for="scan-session-value">세션 값</label>
+                  <input id="scan-session-value" data-scan-session-value type="text" placeholder="세션 값을 입력하면 로그인 상태를 유지한 채 스캔합니다." />
+                </div>
+              </div>
+              <div class="session-check-row session-check-row-compact">
+                <div>
+                  <label for="session-check-path">세션 검증 URL</label>
+                  <input id="session-check-path" data-session-check-path type="text" placeholder="/mypage, /admin, /account" />
+                </div>
+                <button type="button" class="scan-trigger" data-session-check-trigger>세션 확인</button>
+                <span class="badge" data-session-check-status>미확인</span>
+                <button type="button" class="scan-trigger" data-scan-trigger>스캔</button>
+              </div>
+              <div class="scan-results" data-session-check-result>
+                <div class="scan-result-empty">세션 입력 후 확인을 실행하세요.</div>
+              </div>
+              <div class="info-list">
+                <div class="info-card">
+                  <span>대표 화면</span>
+                  <strong data-scan-title>-</strong>
+                  <small data-scan-title-copy>대표 URL 기준</small>
+                </div>
+                <div class="info-card">
+                  <span>수집 규모</span>
+                  <strong data-scan-assets>-</strong>
+                  <small data-scan-assets-copy>페이지 / 엔드포인트 / 파라미터</small>
+                </div>
+                <div class="info-card">
+                  <span>인프라 단서</span>
+                  <strong data-scan-stack>-</strong>
+                  <small data-scan-stack-copy>응답 헤더 기준</small>
+                </div>
+                <div class="info-card">
+                  <span>경로 반응</span>
+                  <strong data-scan-paths>-</strong>
+                  <small data-scan-paths-copy>기본 후보 경로 요약</small>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h2>스캔 결과</h2>
+                <span class="badge" data-scan-status>대기 중</span>
+              </div>
+              <div class="scan-results" data-scan-results>
+                <div class="scan-result-empty">도메인을 선택한 뒤 스캔을 실행하세요.</div>
+              </div>
+            </section>
+          </main>
+        </section>
+
+        <section class="view" data-view="auto-check">
+          <header class="hero">
+            <p class="eyebrow">Vulnerability Check</p>
+            <h1>자동 점검</h1>
+            <p class="hero-copy">사이트 스캔 결과를 기반으로 자동 매핑 가능한 항목을 확인합니다.</p>
+          </header>
+
+          <main class="simple-layout">
+            <section class="panel">
+              <div class="panel-head">
+                <h2>점검 대상</h2>
+                <span class="badge selected-site-badge" data-auto-selected-domain>선택 없음</span>
+              </div>
+              <div class="meta-row auto-target-row">
+                <div>
+                  <label for="auto-check-domain-select">등록된 도메인 선택</label>
+                  <select id="auto-check-domain-select" data-auto-check-domain-select></select>
+                </div>
+                <div>
+                  <label for="auto-session-key">세션 파라미터</label>
+                  <input id="auto-session-key" data-auto-session-key type="text" placeholder="사이트 스캔과 동일한 세션 키를 공유합니다." />
+                </div>
+                <div>
+                  <label for="auto-session-value">세션 값</label>
+                  <input id="auto-session-value" data-auto-session-value type="text" placeholder="사이트 스캔과 동일한 세션 값을 공유합니다." />
+                </div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h2>자동 판정 기준</h2>
+                <span class="badge">Rule Set</span>
+              </div>
+              <div class="info-list auto-rules-grid">
+                <div class="info-card"><span>입력 데이터</span><strong>스캔 결과</strong><small>응답, 헤더, 경로, 인벤토리</small></div>
+                <div class="info-card"><span>자동 판정</span><strong>양호 / 확인 필요 / 취약</strong><small>규칙으로 확정 가능한 항목만 표시</small></div>
+                <div class="info-card"><span>자동 대상</span><strong>헤더 / 경로 / 설정</strong><small>보안 헤더, HTTPS, 노출 경로</small></div>
+                <div class="info-card"><span>수동 이관</span><strong>입력 검증 / 권한</strong><small>SQLi, XSS, 권한, CSRF 등</small></div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h2>자동 점검 결과</h2>
+                <span class="badge" data-auto-check-status>대기 중</span>
+              </div>
+              <div class="scan-results" data-auto-check-results>
+                <div class="scan-result-empty">사이트 스캔을 완료하면 자동 점검 결과가 표시됩니다.</div>
+              </div>
+            </section>
+
+          </main>
+        </section>
+
+        <section class="view" data-view="manual-check">
+          <header class="hero">
+            <p class="eyebrow">Vulnerability Check</p>
+            <h1>수동 점검</h1>
+            <p class="hero-copy">자동 점검으로 확정하기 어려운 항목을 요청/응답 기반으로 직접 확인합니다.</p>
+          </header>
+
+          <main class="simple-layout">
+            <section class="panel">
+              <div class="panel-head">
+                <h2>점검 대상</h2>
+                <span class="badge selected-site-badge" data-manual-selected-domain>선택 없음</span>
+              </div>
+              <div class="meta-row manual-target-row">
+                <div>
+                  <label for="manual-check-domain-select">등록된 도메인 선택</label>
+                  <select id="manual-check-domain-select" data-manual-check-domain-select></select>
+                </div>
+                <div>
+                  <label for="manual-session-key">세션 파라미터</label>
+                  <input id="manual-session-key" data-manual-session-key type="text" placeholder="수동 점검 시 사용할 세션 키" />
+                </div>
+                <div>
+                  <label for="manual-session-value">세션 값</label>
+                  <input id="manual-session-value" data-manual-session-value type="text" placeholder="수동 점검 시 사용할 세션 값" />
+                </div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h2>수동 점검 작업</h2>
+                <span class="badge" data-manual-check-status>대상 선택 필요</span>
+              </div>
+              <div class="manual-layout">
+                <aside class="manual-sidebar">
+                  <div class="manual-vuln-grid" data-manual-vuln-list></div>
+                </aside>
+                <div class="manual-editor">
+                  <form class="manual-check-form" data-manual-check-form>
+                    <div class="meta-row manual-work-row">
+                      <div>
+                        <label for="manual-target-select">수집된 대상 URL 선택</label>
+                        <select id="manual-target-select" data-manual-target-select></select>
+                      </div>
+                      <div>
+                        <label for="manual-parameter-select">수집된 파라미터 선택</label>
+                        <select id="manual-parameter-select" data-manual-parameter-select></select>
+                      </div>
+                      <div>
+                        <label for="manual-target-url" data-manual-target-label>대상 URL</label>
+                        <input id="manual-target-url" name="manual-target-url" type="text" placeholder="/search?q=" />
+                      </div>
+                      <div>
+                        <label for="manual-parameter" data-manual-parameter-label>파라미터</label>
+                        <input id="manual-parameter" name="manual-parameter" type="text" placeholder="q, id, redirect" />
+                      </div>
+                    </div>
+                    <div class="meta-row manual-action-row">
+                      <div>
+                        <label for="manual-payload" data-manual-payload-label>테스트 페이로드</label>
+                        <input id="manual-payload" name="manual-payload" type="text" placeholder="' OR '1'='1" />
+                      </div>
+                      <div>
+                        <label for="manual-verdict">판정</label>
+                        <select id="manual-verdict" name="manual-verdict">
+                          <option value="확인 필요">확인 필요</option>
+                          <option value="양호">양호</option>
+                          <option value="취약">취약</option>
+                        </select>
+                      </div>
+                      <div class="manual-save-cell">
+                        <label>&nbsp;</label>
+                        <button type="submit" class="scan-trigger">수동 점검 저장</button>
+                      </div>
+                    </div>
+                    <div class="meta-row manual-request-response-row">
+                      <div>
+                        <label for="manual-request">Request</label>
+                        <textarea id="manual-request" name="manual-request" rows="4" placeholder="GET /search?q=test HTTP/1.1"></textarea>
+                      </div>
+                      <div>
+                        <label for="manual-response">Response</label>
+                        <textarea id="manual-response" name="manual-response" rows="5" placeholder="200 OK / 오류 메시지 / 응답 본문 변화"></textarea>
+                      </div>
+                    </div>
+                    <div class="meta-row meta-row-single">
+                      <div>
+                        <label for="manual-note">메모</label>
+                        <textarea id="manual-note" name="manual-note" rows="3" placeholder="판단 근거와 추가 확인 사항"></textarea>
+                      </div>
+                    </div>
+                  </form>
+                  <div class="manual-inline-guide" data-manual-guide></div>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h2>저장된 수동 점검 결과</h2>
+              </div>
+              <div class="scan-results" data-manual-records>
+                <div class="scan-result-empty">도메인과 취약점 항목을 선택하면 저장된 결과가 표시됩니다.</div>
+              </div>
+            </section>
+          </main>
+        </section>
+
+        <section class="view" data-view="report">
+          <header class="hero">
+            <p class="eyebrow">Reporting</p>
+            <h1>결과 리포트</h1>
+            <p class="hero-copy">선택한 사이트의 주요 발견사항과 조치 우선순위를 정리합니다.</p>
+          </header>
+
+          <main class="simple-layout">
+            <section class="panel">
+              <div class="panel-head">
+                <h2>핵심 결과</h2>
+                <span class="badge badge-warn">Risk 72</span>
+              </div>
+              <ul class="report-list">
+                <li>Content-Security-Policy 누락</li>
+                <li>X-Frame-Options 미설정</li>
+                <li>관리 경로 노출 후보 탐지</li>
+                <li>API 문서 엔드포인트 접근 가능</li>
+              </ul>
+            </section>
+          </main>
+        </section>
+      </div>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
