@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: vuln-check-backend
+    runtime: node
+    plan: free
+    rootDir: .
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /__version
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: PORT
+        value: 3000
+      - key: CORS_ORIGINS
+        value: https://sanghakbae.github.io
+      - key: SPREADSHEET_WEBHOOK_URL
+        sync: false
