@@ -75,7 +75,23 @@ const manualRequestInput = document.querySelector("#manual-request");
 const manualResponseInput = document.querySelector("#manual-response");
 const manualNoteInput = document.querySelector("#manual-note");
 
-const API_BASE_URL = String(import.meta.env.VITE_API_BASE_URL || "").trim().replace(/\/$/, "");
+const DEFAULT_REMOTE_API_BASE_URL = "https://vuln-check-backend.onrender.com";
+
+function resolveApiBaseUrl() {
+  const configured = String(import.meta.env.VITE_API_BASE_URL || "").trim().replace(/\/$/, "");
+  if (configured) {
+    return configured;
+  }
+
+  const hostname = window.location.hostname || "";
+  if (hostname.endsWith("github.io")) {
+    return DEFAULT_REMOTE_API_BASE_URL;
+  }
+
+  return "";
+}
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 function apiUrl(path) {
   if (!API_BASE_URL) {
